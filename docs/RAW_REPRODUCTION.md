@@ -1,5 +1,7 @@
 # Reproduction from original EMIT and CERES observations
 
+For complete restart instructions, equations, script inventory, output formats and troubleshooting, see the [end-to-end guide](REPRODUCTION_GUIDE.md) or its [illustrated PDF edition](EMIT_CERES_Reproduction_Guide.pdf).
+
 This run reconstructs the TOA flux calculations for the 577 April 2023 timestamps represented in Qianqian's saved results. It independently selects CERES footprints and computes EMIT fluxes from the satellite observations. The historical pickle contents are read afterward for numerical validation; their timestamps define the scope of this run. This does not recover every case in the historical notebook's broader collocation search.
 
 ## Completed results — 2026-09-27

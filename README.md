@@ -4,6 +4,16 @@ Derive spectrally resolved upward shortwave radiative flux at the top of the atm
 
 Start with [the session memo](docs/SESSION_MEMO.md) and [the manuscript draft](references/EMIT%20Flux%20derivation.pdf). The draft and inherited code are research work in progress.
 
+The [end-to-end reproduction guide](docs/REPRODUCTION_GUIDE.md) documents inputs, environment, scientific calculations, every script, restart commands, validation, output formats and troubleshooting. A [PDF edition with three figures](docs/EMIT_CERES_Reproduction_Guide.pdf) is generated from the same source.
+
+```bash
+source scripts/activate.sh
+python scripts/run_reproduction.py                    # Offline checks, plots and PDF
+python scripts/run_reproduction.py --raw --workers 6  # Also run/resume original S3 inputs
+```
+
+The default command requires the completed local raw-derived outputs. Both modes verify all 577 cases and the original 1,482-record comparison selection. The raw mode also recomputes the pilot with L2A reflectance. Workflow/PDF package versions are in `requirements-workflow.txt`; recovery tests run with `python -m unittest discover -s tests -v`.
+
 ## Working environment
 
 A local `.venv` inherits installed packages from the existing Python 3.12 `PACE_EMIT` conda environment. This avoids modifying that shared environment. It is tied to this machine and is not a standalone reproducible environment.

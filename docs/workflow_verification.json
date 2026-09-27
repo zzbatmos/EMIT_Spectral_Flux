@@ -1,0 +1,70 @@
+{
+  "verified_cases": 577,
+  "verified_records": 4844,
+  "fresh_field_comparison": true,
+  "comparison_checked": true,
+  "rtol": 1e-05,
+  "atol": 0.0001,
+  "maximum_absolute_differences": {
+    "CERES_Lon": 0,
+    "CERES_Lat": 0,
+    "CERES_S0": 0,
+    "CERES_Fup_based_on_ADM_filtered": 8.526512829121202e-14,
+    "CERES_Fup_based_on_ADM_unfiltered": 1.1368683772161603e-13,
+    "CERES_Fup": 0,
+    "CERES_Fdn": 0,
+    "CERES_Ref": 0,
+    "CERES_Sza": 0,
+    "CERES_Vza": 0,
+    "CERES_Raz": 0,
+    "EMIT_Fup": 1.1368683772161603e-13,
+    "EMIT_Fup_fullspectrum": 1.1368683772161603e-13,
+    "EMIT_Fdn": 0.0002699042233871296,
+    "EMIT_Ref": 1.0096810576509796e-07,
+    "EMIT_Sza": 1.1444091796875e-05,
+    "EMIT_Vza": 4.76837158203125e-06,
+    "EMIT_Raz": 0.0001068115234375,
+    "EMIT_Adm": 2.220446049250313e-16,
+    "EMIT_wvl": 0,
+    "EMIT_surface_reflectance": 0
+  },
+  "surface_reflectance_cases": [
+    "20230401T094135"
+  ],
+  "input_sha256": {
+    "EMIT_L1B.txt": "783fb0a4ef4f4fea509a3f0cac3a5df3cefaa9c7b43e7b1a17bf739747628ce7",
+    "EMIT_L2A.txt": "b1ed84699a4730fcdc880ac667d7ed7a7896ecaf783276e4b42f2a09a91a4f0e",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz010.csv": "c39702e4b2f97a8980aaaa6da5fa60c24c43619895d8c4e30bc0f78308051392",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz1020.csv": "7f2c187230c4ed655e85e0f63d1178754d1e97c4c2d25b469c70915553532cea",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz2030.csv": "e1e28a83d373deb991a751bf2bb1154bf123c243bba00d0d34bfbe569b00031b",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz3040.csv": "ef93256fffe736b45acf025379ce38eb7416660911b8a4ba30b5c065a054b2f9",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz4050.csv": "192ff3ffd8ec062ba4e61dec8e01b4c81bf5441cb728b04368629755c9c99496",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz5060.csv": "f6a755bcd9a1786b96dd7cd00be19df1f172a153a5407f3246a198c9a196acdc",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz6070.csv": "e7d56f65c591ea94964d737a9a26a656853216f82ae5c2b7bf5a1d43c8c4b263",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz7080.csv": "fa06b03333ac817492a88525a6305171899c777f549501ee8f20e92e61302fcc",
+    "Zhibo/Leob2005_ADM/table-admsw-clr-l-sz8090.csv": "c5adaf54e4446a5789962b84f48f20194f25c15687b18db2cf8ba8d319d26f9e"
+  },
+  "script_sha256": {
+    "scripts/build_reproduction_report.py": "0e577bed60d7cd0d59a20c35276e6b968ecd8379500bf84d26d5744a058335f2",
+    "scripts/check_environment.py": "f2e3d1df86e79265c9d6b90559d728664df8ef59c22687b631576728b59033bb",
+    "scripts/plot_emit_rgb.py": "387668187c8642538e0df3693577ba567c529116f9d6c89bce6472d725bc999a",
+    "scripts/replicate_raw_batch.py": "850b06356353fc4a7c4b307659f8c4cc00c3291000b0d374622a91ee54e86976",
+    "scripts/replicate_raw_case.py": "929c0240df8ba7c5444e463d7cd8d1484e4a4dca3cfd87a7896b5091878676be",
+    "scripts/reproduce_saved_flux_comparison.py": "e3c146483833cad9199b14a6f8d51f4d5db459cf241a18ecc1781afec9b83e91",
+    "scripts/run_reproduction.py": "aebcba30bd05f9e3bbfdee235163ae8eea008188c2c98913b4732a2daad550dd",
+    "scripts/summarize_raw_reproduction.py": "8e6f04163ddbf8fc8eda43246abf83df3287ddf306d33d94ed79a565fd6ace14",
+    "scripts/verify_reproduction.py": "46d726c30dd0d61a2dc1a57b58cc85f70ca1254d7be75fa3a3b9a2223c511643"
+  },
+  "environment": {
+    "numpy": "2.3.5",
+    "scipy": "1.18.1",
+    "matplotlib": "3.10.9",
+    "basemap": "2.0.0",
+    "basemap-data": "2.0.0",
+    "earthaccess": "0.12.0",
+    "h5py": "3.15.1",
+    "pyhdf": "0.11.6",
+    "s3fs": "2023.12.2",
+    "fsspec": "2023.12.2"
+  }
+}

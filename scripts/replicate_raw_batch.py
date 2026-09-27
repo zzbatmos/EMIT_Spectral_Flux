@@ -23,6 +23,7 @@ ASDCFS=None
 
 def init():
  global LPFS,ASDCFS
+ (ROOT/'.cache').mkdir(exist_ok=True)
  with (ROOT/'.cache/earthdata-auth.lock').open('w') as lock:
   fcntl.flock(lock,fcntl.LOCK_EX)
   if not retry(lambda:earthaccess.login(strategy='netrc',persist=False),tries=5).authenticated:raise RuntimeError('Auth failed')
@@ -45,7 +46,9 @@ def worker(timestamp):
 
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--workers',type=int,default=4);p.add_argument('--limit',type=int);args=p.parse_args()
+ if args.workers<1 or (args.limit is not None and args.limit<1):p.error('workers and limit must be positive')
  files=sorted((ROOT/'Qianqian/Flux_Comparison_Surface_Reflectance_Data').glob('*.pkl'))
+ if not files:raise FileNotFoundError('No historical reference pickle files found')
  stamps=[f.stem.rsplit('_',1)[-1] for f in files]
  if args.limit:stamps=stamps[:args.limit]
  for ts in stamps:
@@ -53,21 +56,35 @@ def main():
  pending=[];status=[]
  for ts in stamps:
   d=ROOT/'outputs/raw_reproduction'/ts
-  if (d/'provenance.json').exists() and (d/'validation.json').exists():
-   v=json.loads((d/'validation.json').read_text());fail=[k for k,x in v['fields'].items() if not x.get('allclose_rtol1e-5_atol1e-4',False)]
+  required=['provenance.json','validation.json','spectra_and_geometry.npz','collocation.npz',f'flux_comparison_results_raz_ceres_{ts}.pkl']
+  complete=all((d/name).is_file() for name in required)
+  try:
+   v=json.loads((d/'validation.json').read_text()) if complete else {}
+   complete=complete and bool(v.get('reference_exists')) and bool(v.get('fields'))
+   fail=[k for k,x in v.get('fields',{}).items() if not x.get('allclose_rtol1e-5_atol1e-4',False)]
+   complete=complete and not fail
+  except (OSError,ValueError):complete=False
+  if complete:
    status.append({'timestamp':ts,'status':'resumed','validation_failed_fields':fail})
   else:pending.append(ts)
  print(f'{len(stamps)} cases; {len(status)} complete; {len(pending)} pending',flush=True)
  target=ROOT/'outputs/raw_reproduction/batch_status.json'
+ target.parent.mkdir(parents=True,exist_ok=True)
  def save():
-  target.write_text(json.dumps({'updated_utc':dt.datetime.now(dt.timezone.utc).isoformat(),'target_cases':len(stamps),'cases':status},indent=2))
+  tmp=target.with_suffix('.tmp')
+  tmp.write_text(json.dumps({'updated_utc':dt.datetime.now(dt.timezone.utc).isoformat(),'target_cases':len(stamps),'cases':status},indent=2))
+  tmp.replace(target)
  save()
  with ProcessPoolExecutor(max_workers=args.workers,mp_context=mp.get_context('spawn'),initializer=init) as pool:
   tasks={pool.submit(worker,ts):ts for ts in pending}
   for future in as_completed(tasks):
-   row=future.result();status.append(row);save()
+   try:row=future.result()
+   except Exception as exc:row={'timestamp':tasks[future],'status':'error','error':str(exc)}
+   status.append(row);save()
    print(f"{len(status)}/{len(stamps)} {row['timestamp']} {row['status']} validation={row.get('validation_failed_fields',row.get('error'))}",flush=True)
- print('Batch complete',flush=True)
+ failures=[row for row in status if row['status']=='error' or row.get('validation_failed_fields')]
+ if failures:raise SystemExit(f'{len(failures)} cases failed; inspect batch_status.json and rerun to retry')
+ print('Batch complete: every case passed validation',flush=True)
 
 
 if __name__=='__main__':main()
