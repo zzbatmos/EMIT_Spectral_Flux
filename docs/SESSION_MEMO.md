@@ -157,3 +157,10 @@ New restart entry point: source scripts/activate.sh; python scripts/run_reproduc
 ## Local commit requested — 2026-09-27
 
 Zhibo explicitly requested a local git commit. The scripts, report and PDF were already committed as cbbf53b. Added the supplied EMIT_L1B.txt and EMIT_L2A.txt filename manifests unchanged to version control, so their absence from git noted above no longer applies. They contain product filenames and a few ancillary filename entries, which the product parser ignores. Historical pickle results and raw observations still require separate preservation. The machine-specific old_EMIT_dust_DRE symlink remains untracked. No remote push requested or performed.
+
+
+## GitHub publication preparation — 2026-09-27
+
+Zhibo authorized pushing the project to https://github.com/zzbatmos/EMIT_Spectral_Flux.git. The remote was empty. A scan of all local main-branch history found AWS credential values in saved outputs of two inherited notebooks: Zhibo/EMIT_data_analysis_AWS.ipynb and Zhibo/MODIS_AWS.ipynb. Removed code-cell outputs/execution counts from those notebooks throughout main history; notebook source and research result files were preserved. Private original notebooks and a pre-publication git bundle are retained under ignored .cache/prepublication_originals/ with restricted permissions. A fresh text/notebook credential-pattern scan of the rewritten main history returned no findings. Push only main, never backup refs or a mirror.
+
+History IDs changed: initial baseline d6c7c0e → 7471be3; RGB b143774 → 388785b; saved plots ade42a2 → 8ce0f21; raw reproduction 87df034 → 5eff242; guide cbbf53b → dc2d213; manifests c4bf146 → 16921fb. Earlier memo IDs refer to the pre-publication local history. Updated the guide/PDF baseline reference. Raw data, result pickles, credentials and the machine-specific old_EMIT_dust_DRE symlink are excluded from publication.
