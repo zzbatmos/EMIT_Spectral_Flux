@@ -1,0 +1,7 @@
+# Versions used to reproduce Qianqian's saved flux plots on 2026-09-27.
+# Install into the project venv; the shared conda environment remains unchanged.
+numpy==2.3.5
+scipy==1.18.1
+matplotlib==3.10.9
+basemap==2.0.0
+basemap-data==2.0.0

@@ -1,0 +1,7 @@
+basemap==2.0.0
+basemap_data==2.0.0
+matplotlib==3.10.9
+numpy==2.3.5
+packaging==25.0
+pyproj==3.7.2
+pyshp==2.3.1

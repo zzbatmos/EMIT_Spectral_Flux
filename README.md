@@ -36,3 +36,12 @@ python scripts/plot_emit_rgb.py
 ```
 
 Uses existing Earthdata credentials in `~/.netrc` and reads EMIT L1B radiance directly from S3. The script verifies the S3 backend, selects bands near 650/550/450 nm, applies the file's geolocation lookup table, and writes annotated/unannotated PNGs plus provenance JSON to `outputs/emit_rgb/`. RGB contrast is stretched independently by channel for display; it is not a flux or surface-reflectance product. Version 001 is used to match the inherited analysis. The installed earthaccess skill supplies catalog retry helpers.
+
+## Reproduce Qianqian's saved flux comparisons
+
+```bash
+source scripts/activate.sh
+python scripts/reproduce_saved_flux_comparison.py
+```
+
+The 577 supplied result files reproduce both manuscript regressions with 1,482 selected records. PNG/PDF plots, statistics, input hashes and a record-level selection table are written to `outputs/saved_flux_comparison/`. See [the reproduction report](docs/SAVED_FLUX_REPRODUCTION.md) for results and the historical longitude-mask issue. The required Basemap installation is available in `.venv`; main package versions are recorded in `requirements-reproduction.txt`.
