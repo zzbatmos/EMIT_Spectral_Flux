@@ -1,0 +1,72 @@
+{
+  "input_directory": "outputs/raw_reproduction/flux_results",
+  "files": 577,
+  "total_footprint_records": 4844,
+  "excluded_files_over20": 51,
+  "excluded_empty_files": 0,
+  "retained_files": 526,
+  "records_after_file_filter": 2324,
+  "legacy_land_records": 1621,
+  "nan_reflectance_records": 238,
+  "final_records": 1482,
+  "final_scenes": 339,
+  "direct": {
+    "n": 1482,
+    "slope": 1.080413027525219,
+    "intercept_W_m2": 1.233909747759924,
+    "pearson_r": 0.9343405530002342,
+    "r_squared": 0.8729922689807835,
+    "pvalue": 0.0,
+    "slope_stderr": 0.010711957339197062,
+    "mean_emit_minus_ceres_W_m2": 27.203498911884555,
+    "difference_std_ddof0_W_m2": 25.239834212298987,
+    "rmse_W_m2": 37.1090229474348
+  },
+  "solar_angle_adjusted": {
+    "n": 1482,
+    "slope": 1.0013830676064388,
+    "intercept_W_m2": 12.488202598052396,
+    "pearson_r": 0.9776101182212882,
+    "r_squared": 0.955721543248641,
+    "pvalue": 0.0,
+    "slope_stderr": 0.005602733122730217,
+    "mean_emit_minus_ceres_W_m2": 12.954574979684987,
+    "difference_std_ddof0_W_m2": 14.627226406763425,
+    "rmse_W_m2": 19.539108609632056
+  },
+  "longitude_diagnostic": {
+    "candidate_longitudes_over180": 653,
+    "land_classifications_changed_by_wrapping": 637,
+    "selected_if_wrapped": 2022,
+    "baseline_uses_wrapping": false
+  },
+  "manuscript_rounded_targets": {
+    "direct": [
+      1.08,
+      1.23,
+      0.93
+    ],
+    "adjusted": [
+      1.0,
+      12.49,
+      0.98
+    ]
+  },
+  "notebook_saved_adjusted_difference": {
+    "mean_W_m2": 12.954575148441972,
+    "std_W_m2": 14.627227186615482
+  },
+  "environment": {
+    "numpy": "2.3.5",
+    "scipy": "1.18.1",
+    "matplotlib": "3.10.9",
+    "basemap": "2.0.0",
+    "basemap-data": "2.0.0"
+  },
+  "selection": "Original file-size exclusion, Basemap() on unchanged CERES longitudes, non-NaN reflectances. No extra Sahara bounding box, deduplication, or outlier filter.",
+  "scope": "Raw S3 observations recomputed for 577 historical cases; see raw_validation_summary.json for validation and scope.",
+  "matches_manuscript_to_printed_precision": {
+    "direct": true,
+    "adjusted": true
+  }
+}

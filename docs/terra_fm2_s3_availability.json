@@ -1,0 +1,16 @@
+{
+  "checked_on": "2026-09-27",
+  "prefix": "s3://asdc-prod-protected/CERES/CER_SSF_Terra-FM2-MODIS_Edition4A/2023.04/",
+  "objects": 720,
+  "missing_hours": [],
+  "unexpected_hours": [],
+  "total_bytes": 54850998178,
+  "processing_prefixes": {
+    "CER_SSF_Terra-FM2-MODIS_Edition4A_407405": 720
+  },
+  "tested_object": "CER_SSF_Terra-FM2-MODIS_Edition4A_407405.2023043023",
+  "tested_object_size_bytes": 74694931,
+  "tested_header_hex": "0e03130100100000",
+  "authentication": "earthaccess netrc; temporary LARC_CLOUD credentials; direct S3",
+  "scope": "Listed all objects; HEAD and first eight bytes read for supplied object. No complete granule downloaded or all-file content validation."
+}

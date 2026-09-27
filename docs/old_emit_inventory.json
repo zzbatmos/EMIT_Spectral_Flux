@@ -1,0 +1,41 @@
+{
+  "per_granule_pickles": 5819,
+  "daily_lists": [
+    {
+      "file": "EMIT_CERES_MAIAC_match_file_2023-06-01.pickle",
+      "entries": 104,
+      "distinct_objects": 1,
+      "distinct_EMIT_RAD_urls": 1
+    }
+  ],
+  "schema_counts": {
+    "CERES_files,EMIT_files,EMIT_product_types,MAIAC_aerosol_files,MAIAC_surf_files": 5819
+  },
+  "load_errors": [],
+  "unique_emit_timestamps": 5819,
+  "emit_date_range": [
+    "20230601T075644",
+    "20230831T092247"
+  ],
+  "mismatched_EMIT_product_timestamps": 0,
+  "unique_referenced_CERES_files": 1065,
+  "exact_local_CERES_matches": 812,
+  "missing_exact_CERES_filenames": 253,
+  "records_with_all_CERES_files_local": 3315,
+  "missing_examples": [
+    "CER_SSF_Aqua-FM3-MODIS_Edition4A_407405.2023082323.hdf",
+    "CER_SSF_Aqua-FM3-MODIS_Edition4A_409406.2023073100",
+    "CER_SSF_Aqua-FM3-MODIS_Edition4A_409406.2023073101"
+  ],
+  "missing_refs_with_same_hour_other_build": 0,
+  "normalized_CERES_reference_check": {
+    "unique_referenced_CERES_files": 814,
+    "local_after_hdf_extension_normalization": 812,
+    "missing_after_normalization": [
+      "CER_SSF_Aqua-FM3-MODIS_Edition4A_407405.2023082323.hdf",
+      "CER_SSF_Aqua-FM3-MODIS_Edition4A_409406.2023082323.hdf"
+    ],
+    "records_all_CERES_available_after_normalization": 5817,
+    "records_with_some_CERES_available_after_normalization": 5819
+  }
+}

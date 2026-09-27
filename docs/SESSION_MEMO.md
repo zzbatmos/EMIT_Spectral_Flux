@@ -95,3 +95,51 @@ Preserved original rules: discard files with >20 footprints, default Basemap lan
 Found a real sample-selection issue: 0–360° CERES longitudes were passed unchanged to default Basemap (-180–180°). Wrapping changes 637 candidate land classifications and would increase the final sample to 2,022 records. This correction was NOT applied to the historical reproduction. Investigate separately before interpreting the sample as all available clear-sky land cases.
 
 Installed Basemap 2.0.0 / basemap-data 2.0.0 in project .venv; local compatible NumPy 2.3.5, Matplotlib 3.10.9 and supporting packages shadow the shared installation. Shared conda environment untouched; required project imports pass. Main reproduction pins: `requirements-reproduction.txt`; local override inventory: `docs/reproduction-environment.txt`. Basemap is now available and np.trapz is present under this NumPy version, superseding earlier environment observations. Original scripts and pickle results remain untouched. No raw satellite data were accessed. Next work can examine corrected longitude selection, then reproduce a selected case from original observations.
+
+## old_EMIT_dust_DRE inspection — 2026-09-27
+
+User added `old_EMIT_dust_DRE`, a symlink to `/home/ssm-user/Research/EMIT_dust_DRE` (the same external tree noted in the earlier audit). Read-only inspection; external originals unchanged. Inventory saved in `docs/old_emit_inventory.json`.
+
+`CERES_SSF/` contains 1,229 actual HDF4 SSF files: Aqua-FM3 MODIS Edition4A, June–August 2023, processing builds 407405 (910 files) and 409406 (319). Month counts: June 295, July 314, August 620. Opened one HDF from each build with pyhdf and confirmed all 11 required time/geolocation/radiance/flux/clear-fraction/geometry fields. These support a summer Aqua extension, not exact April Terra reproduction.
+
+`EMIT_CERES_MAIAC_match_files/` contains 5,819 per-granule dictionaries and one daily list. All loaded successfully. Each per-granule dictionary stores EMIT S3 URLs (RAD/OBS/RFL/MASK), product labels, CERES file URLs, MAIAC MCD19A1 surface and MCD19A2 aerosol file URLs. They are candidate file associations, not final footprint collocations: no CERES pixel indices, spatial masks, spectra, or flux estimates. EMIT timestamps span June 1–August 31, 2023; 5,819 unique timestamps; no within-record timestamp mismatch among the four EMIT products.
+
+Normalize CERES URL basenames by adding `.hdf` when omitted. After normalization there are 814 distinct referenced CERES filenames, 812 present locally. Missing references are the 407405 and 409406 builds for hour 2023082323. 5,817 per-scene dictionaries have all referenced CERES files available, and all 5,819 have at least one available candidate. Thus most of this summer workflow has locally available CERES inputs; live EMIT/MAIAC links were not revalidated here.
+
+The daily `EMIT_CERES_MAIAC_match_file_2023-06-01.pickle` is defective: 104 list entries reference the same dictionary object and one EMIT RAD URL. The notebook constructs a dictionary outside its granule loop and repeatedly appends it, explaining this aliasing. Prefer the 5,819 separate per-granule files; do not interpret the daily list as 104 distinct scenes.
+
+Generator notebook `old_EMIT_dust_DRE/CERES-EMIT-MODIS-Collocation.ipynb` searches CERES over a full day in a ±0.5° box around a point from the EMIT footprint boundary. A later cell performs the actual spatial, daytime, 100%-clear, and 20 km pixel selection; that cell still has an unfinished radiance-processing placeholder. Revalidate footprint-level time matching before calling these science-ready collocations.
+
+## April Terra-FM2 archive found on S3 — 2026-09-27
+
+User supplied an ASDC S3 URL. Successfully authenticated using earthaccess with provider `LARC_CLOUD` and verified the exact object `s3://asdc-prod-protected/CERES/CER_SSF_Terra-FM2-MODIS_Edition4A/2023.04/CER_SSF_Terra-FM2-MODIS_Edition4A_407405.2023043023`: 74,694,931 bytes, readable through S3; first bytes `0e031301` are the HDF4 signature. No `.hdf` suffix is present on these S3 keys.
+
+Listing the April prefix returns all 720 hourly objects from 2023040100 through 2023043023, all historical processing build 407405. Checked exact hourly coverage, not just the count. This resolves availability of the April Terra-FM2 raw archive needed for Qianqian's rerun. Inventory: `outputs/terra_fm2_april_s3_inventory.json`; tracked check summary: `docs/terra_fm2_s3_availability.json`. Only the supplied object's header was read; full contents of all files have not been validated. No full granules downloaded.
+
+Next retrieval should select the hourly files needed by saved EMIT cases. ASDC uses separate temporary credentials from LP DAAC; let earthaccess scope them. Existing pyhdf expects a local filename, so a practical path is to cache selected CERES hourly HDF4 granules locally (adding `.hdf` locally if useful), while retaining direct S3 access for EMIT. April boundary cases may require adjacent-month hours under the historical five-hour search rule; those prefixes were not checked yet.
+
+## Raw-observation replication started — 2026-09-27
+
+User authorized reconstructing Qianqian's workflow and explicitly suggested 4–6 parallel jobs. New code: `scripts/replicate_raw_case.py`, `scripts/replicate_raw_batch.py`, `scripts/summarize_raw_reproduction.py`. Inputs use user-supplied `EMIT_L1B.txt` and `EMIT_L2A.txt`; all 577 saved-case timestamps have one RAD and one OBS manifest entry. Originals remain untouched.
+
+Pilot `20230401T094135` (9 clear CERES footprints) successfully rebuilt from S3 EMIT RAD/OBS/RFL and five hourly ASDC CERES files. Correct hour selected independently: `CER_SSF_Terra-FM2-MODIS_Edition4A_407405.2023040108`. CERES arrays, ADM, measured-band upward flux, UV-corrected upward flux, wavelengths, and surface-reflectance spectra match the saved pilot exactly. Remaining geometry/incoming-flux differences are at floating-point precision and pass rtol=1e-5, atol=1e-4. All 4,844 saved ADM factors also match the recovered CSV tables and original bin lookup.
+
+Important numerical compatibility: NumPy 1 promoted Python-float/float32 scalar operations to float64, whereas NumPy 2 often retains float32. Explicit float64 CERES scalar latitude and relative-azimuth/integration arithmetic are required to reproduce the original distance mask and flux. Without that, the pilot differed by up to 0.036 W/m² and 0.51° relative azimuth; restoring historical precision resolved it. Preserve this in future refactoring.
+
+For uncompressed contiguous EMIT arrays, use HDF5 metadata to locate the dataset byte offset, then read checked 32 MiB S3 ranges into a native-typed NumPy array with four I/O threads per process. Preserve original float32 spatial mean order. Pilot radiance loaded within about 12 s including preceding setup; the full pilot with surface reflectance took ~26 s. This is much faster than separate strided band reads.
+
+A 577-case, resumable batch is now running with SIX processes (increased from four at the user's request), with one native radiance cube per worker. CERES HDF4 files are cached under ignored `data/ceres_terra_april/`, with process locks; EMIT cubes are not saved to disk. Main batch omits L2A surface-reflectance computation because it does not enter the TOA comparison; pilot verifies that branch separately. Historical results are read only after raw calculations for validation, never to supply computed fluxes or collocation indices.
+
+Batch output/checkpoints: `outputs/raw_reproduction/<timestamp>/{provenance.json,validation.json,run.log,collocation.npz,spectra_and_geometry.npz,flux_comparison_results_raz_ceres_<timestamp>.pkl}`. Progress: `outputs/raw_reproduction/batch_status.json`. Resume using `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python scripts/replicate_raw_batch.py --workers 6`. Authentication is serialized and retried after an initial transient JSON error from the credential endpoint. A case is complete only when provenance and validation exist.
+
+The first six illustrated April 1 swath scenes produce a raw-derived map of 53 clear CERES footprints; `raw_collocation_map.png` uses sampled (every fourth pixel) geolocation hulls for display, with the same 20 km selection rule. Pilot spectral-flux figure: `pilot_spectral_flux.png`. Both visually inspected. These are diagnostic reconstructions; the final all-case comparison awaits batch completion and validation.
+
+## Raw-observation replication completed — 2026-09-27
+
+The six-process batch finished all 577 cases successfully (4,844 footprint records). No missing cases, shape/NaN-pattern mismatches or field differences beyond rtol=1e-5, atol=1e-4. Maximum measured-band and UV-augmented EMIT upward-flux differences: 1.1368683772161603e-13 W/m²; incoming-flux difference: 0.0002699042233871296 W/m². CERES reported fluxes, coordinates and geometry match exactly. Pilot wavelengths and surface-reflectance spectra match exactly. This supersedes the preceding running status.
+
+Regenerated the comparison from raw-derived result files, and verified the exact same 1,482 selected record identities across 339 scenes. Direct slope/intercept/R: 1.080413027525219 / 1.233909747759924 / 0.9343405530002342. Solar-angle-adjusted: 1.0013830676064388 / 12.488202598052396 / 0.9776101182212882. RMSEs 37.1090229474348 and 19.539108609632056 W/m². Both manuscript-rounded fits reproduced. Combined figure visually inspected; all new scripts compile.
+
+Report: docs/RAW_REPRODUCTION.md. Tracked full-precision summaries: docs/raw_validation_summary.json and docs/raw_flux_comparison_summary.json. Figures and selection/hash tables: outputs/raw_reproduction/comparison/. Diagnostic collocation map and pilot spectral flux: outputs/raw_reproduction/. README documents the complete resumable workflow. User-supplied manifests and old_EMIT_dust_DRE symlink remain untouched.
+
+This establishes a reproducible historical TOA-flux baseline, not a validation of the scientific assumptions. Scope remains the 577 saved timestamps; L2A surface-reflectance branch was independently reproduced only for the pilot. Next scientific work should assess the longitude-mask correction, footprint time differences/coverage, wavelength-independent ADM and empirical UV correction separately, retaining this baseline.

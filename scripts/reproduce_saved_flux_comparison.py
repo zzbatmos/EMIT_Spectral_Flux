@@ -59,6 +59,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--input-dir', type=Path, default=ROOT/'Qianqian/Flux_Comparison_Surface_Reflectance_Data')
     parser.add_argument('--output-dir', type=Path, default=ROOT/'outputs/saved_flux_comparison')
+    parser.add_argument('--title', default='EMIT–CERES comparison · Reproduced from Qianqian’s saved April 2023 results')
+    parser.add_argument('--scope', default='Replotting saved derived fluxes; no independent validation of raw-data collocation, ADM, or UV correction.')
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     rows, manifest = [], []
@@ -118,7 +120,7 @@ def main():
         'notebook_saved_adjusted_difference':{'mean_W_m2':12.954575148441972,'std_W_m2':14.627227186615482},
         'environment':{k:importlib.metadata.version(k) for k in ['numpy','scipy','matplotlib','basemap','basemap-data']},
         'selection':'Original file-size exclusion, Basemap() on unchanged CERES longitudes, non-NaN reflectances. No extra Sahara bounding box, deduplication, or outlier filter.',
-        'scope':'Replotting saved derived fluxes; no independent validation of raw-data collocation, ADM, or UV correction.'}
+        'scope':args.scope}
     for key,stats in [('direct',direct),('adjusted',adjusted)]:
         summary.setdefault('matches_manuscript_to_printed_precision',{})[key] = [round(stats['slope'],2),round(stats['intercept_W_m2'],2),round(stats['pearson_r'],2)] == summary['manuscript_rounded_targets'][key]
     (args.output_dir/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
@@ -134,7 +136,7 @@ def main():
     fig,axs=plt.subplots(1,2,figsize=(13,5.6),layout='constrained')
     sc=panel(axs[0],x,y,direct,False,colors); panel(axs[1],xa,ya,adjusted,True)
     fig.colorbar(sc,ax=axs[0],label='EMIT − CERES solar zenith angle [°]',shrink=.8)
-    fig.suptitle('EMIT–CERES comparison · Reproduced from Qianqian’s saved April 2023 results',fontsize=14)
+    fig.suptitle(args.title,fontsize=14)
     for ext in ['png','pdf']: fig.savefig(args.output_dir/f'comparison_pair.{ext}',dpi=220)
     plt.close(fig)
     print(json.dumps(summary,indent=2))

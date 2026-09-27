@@ -45,3 +45,23 @@ python scripts/reproduce_saved_flux_comparison.py
 ```
 
 The 577 supplied result files reproduce both manuscript regressions with 1,482 selected records. PNG/PDF plots, statistics, input hashes and a record-level selection table are written to `outputs/saved_flux_comparison/`. See [the reproduction report](docs/SAVED_FLUX_REPRODUCTION.md) for results and the historical longitude-mask issue. The required Basemap installation is available in `.venv`; main package versions are recorded in `requirements-reproduction.txt`.
+
+## Recompute from original observations
+
+On this AWS us-west-2 instance, with Earthdata credentials in `~/.netrc`:
+
+```bash
+source scripts/activate.sh
+python scripts/replicate_raw_case.py 20230401T094135 --include-rfl
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python scripts/replicate_raw_batch.py --workers 6
+python scripts/summarize_raw_reproduction.py --require-complete
+python scripts/reproduce_saved_flux_comparison.py \
+  --input-dir outputs/raw_reproduction/flux_results \
+  --output-dir outputs/raw_reproduction/comparison \
+  --title 'EMIT–CERES comparison · Recomputed from original April 2023 observations' \
+  --scope 'Raw S3 observations recomputed for 577 historical cases; see raw_validation_summary.json for validation and scope.'
+```
+
+The supplied `EMIT_L1B.txt` and `EMIT_L2A.txt` manifests identify source filenames. The 577 saved result files define the case timestamps and provide validation references; fluxes and footprint selections are calculated independently from satellite observations. The batch resumes cases with completed provenance and validation files. It reads EMIT V001 from S3 into memory and caches only the selected CERES Terra-FM2 Edition4A build 407405 HDF4 files under `data/ceres_terra_april/` for pyhdf. Six workers fit this instance; reduce the worker count on smaller machines.
+
+Each case retains source URLs, selected CERES indices, pixel counts, mean spectra, output fluxes, and comparison diagnostics in `outputs/raw_reproduction/`. The batch recomputes TOA fluxes; L2A surface-reflectance spectra are recomputed only for the pilot. Historical collocation, UV correction, ADM assumptions and plotting selection are preserved. See [the raw reproduction report](docs/RAW_REPRODUCTION.md).
