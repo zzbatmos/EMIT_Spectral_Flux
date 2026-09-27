@@ -1,0 +1,33 @@
+# Credentials and machine-local configuration
+*.pem
+*.key
+.netrc
+.env
+.env.*
+!.env.example
+*recovery-code*
+.aws/
+# Environment and caches
+.venv/
+.cache/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.agents/
+.codex/
+# Downloaded data and generated artifacts
+/data/
+/outputs/
+*.pkl
+*.nc
+*.nc4
+*.hdf
+*.h5
+*.cdf
+*.npz
+*.zip
+*.out
+*.log
+# Existing files flagged for credential review; preserve locally
+/Zhibo/AWS_NASA_data_test.ipynb
+/Zhibo/AWS_Utils.py

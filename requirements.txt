@@ -1,0 +1,17 @@
+# Direct dependencies of the existing research code; observed versions in docs/environment-snapshot.txt.
+# This is a dependency manifest, not a portable solver lockfile.
+numpy
+scipy
+pandas
+xarray
+netCDF4
+h5netcdf
+h5py
+earthaccess
+requests
+matplotlib
+cartopy
+seaborn
+pyhdf
+jupyterlab
+ipykernel

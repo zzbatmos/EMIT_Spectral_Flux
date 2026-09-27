@@ -1,0 +1,4 @@
+# Optional packages used by Qianqian/EMIT_CERES_FupTOA_Comparison.py.
+-r requirements.txt
+basemap
+mpl-scatter-density
