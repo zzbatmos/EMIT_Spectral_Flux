@@ -1,0 +1,79 @@
+{
+  "granule": "EMIT_L1B_RAD_001_20230426T090707_2311606_016",
+  "collection": "EMITL1BRAD",
+  "version": "001",
+  "query": {
+    "short_name": "EMITL1BRAD",
+    "version": "001",
+    "temporal": [
+      "2023-04-26T09:07:18",
+      "2023-04-26T09:07:20"
+    ],
+    "bounding_box": [
+      10,
+      15,
+      30,
+      30
+    ],
+    "count": 1
+  },
+  "time_start": "2023-04-26T09:07:07+0000",
+  "time_end": "2023-04-26T09:07:19+0000",
+  "s3_url": "s3://lp-prod-protected/EMITL1BRAD.001/EMIT_L1B_RAD_001_20230426T090707_2311606_016/EMIT_L1B_RAD_001_20230426T090707_2311606_016.nc",
+  "aws_region": "us-west-2",
+  "backend": "s3fs.core.S3File",
+  "radiance_units": "uW/cm^2/SR/nm",
+  "rgb_wavelengths_nm": [
+    648.7302856445312,
+    551.86669921875,
+    447.7427978515625
+  ],
+  "rgb_band_indices_zero_based": [
+    36,
+    23,
+    9
+  ],
+  "raw_shape": [
+    1280,
+    1242,
+    3
+  ],
+  "ortho_shape": [
+    2031,
+    2069,
+    4
+  ],
+  "extent_west_east_south_north": [
+    28.1226134605757,
+    29.244492544986123,
+    28.30096040814312,
+    29.4022346567838
+  ],
+  "geotransform": [
+    28.1226134605757,
+    0.000542232520256367,
+    -0.0,
+    29.4022346567838,
+    -0.0,
+    -0.000542232520256367
+  ],
+  "stretch_percentiles": [
+    2,
+    98
+  ],
+  "stretch_lower_radiance": [
+    16.171677436828613,
+    14.819860534667969,
+    11.66586893081665
+  ],
+  "stretch_upper_radiance": [
+    23.305723800659184,
+    22.09933143615723,
+    16.603149452209475
+  ],
+  "gamma": 2.2,
+  "valid_raw_fraction": 1.0,
+  "valid_ortho_pixels": 2103024,
+  "notes": "Display RGB from L1B radiance, not surface reflectance or spectral flux; no cloud screening. Version 001 selected for continuity with inherited 2023 work; CMR also lists 002.",
+  "glt_reference": "https://github.com/nasa/EMIT-Data-Resources/blob/main/python/modules/emit_tools.py"
+}

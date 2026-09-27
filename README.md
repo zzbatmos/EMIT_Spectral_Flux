@@ -27,3 +27,12 @@ Activation routes plotting and Jupyter caches into the writable project `.cache`
 Historical scripts include unavailable absolute paths, notebook-style execution at import, and removed `np.trapz` calls. They are preserved as received; passing the environment check does not establish that the scientific workflows run. See the memo before reproducing results.
 
 Keep credentials outside version control. Raw data, pickle results, caches, environments, and credential files are ignored. No remote repository or data downloads are configured by this setup.
+
+## First Sahara RGB scene
+
+```bash
+source scripts/activate.sh
+python scripts/plot_emit_rgb.py
+```
+
+Uses existing Earthdata credentials in `~/.netrc` and reads EMIT L1B radiance directly from S3. The script verifies the S3 backend, selects bands near 650/550/450 nm, applies the file's geolocation lookup table, and writes annotated/unannotated PNGs plus provenance JSON to `outputs/emit_rgb/`. RGB contrast is stretched independently by channel for display; it is not a flux or surface-reflectance product. Version 001 is used to match the inherited analysis. The installed earthaccess skill supplies catalog retry helpers.

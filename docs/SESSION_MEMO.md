@@ -2,6 +2,10 @@
 
 Last updated: 2026-09-27 (UTC).
 
+## Execution context
+
+We are working on an AWS instance (explicitly confirmed by Zhibo). Prefer direct S3 access to NASA EMIT data instead of downloading complete granules. Verify the runtime region and direct S3 file type during access. Shared helper libraries are in `/home/ssm-user/Research/python_lib/`, including `EMIT_lib.py` and `AWS_Utils.py`. Zhibo and research scientist Qianqian developed the inherited analyses; this work continues their unfinished project.
+
 ## Objective and source
 
 Derive spectrally resolved upward TOA shortwave flux from EMIT hyperspectral observations, initially over the Sahara, with broadband validation against CERES. Longer-term motivation: use spectral dust direct radiative effects to distinguish particle-size and absorption/mineralogy effects that broadband flux alone cannot separate.
@@ -51,3 +55,17 @@ Observed issues to resolve before scientific execution:
 ## Next session
 
 Start with a single reproducible EMIT/CERES case. Locate the required granules, solar spectrum, and collocation inputs; inspect metadata, unit conversions, geometry, and cloud masks. Extract pure computations from legacy scripts before execution, parameterize paths, and reconcile UV regression with the draft. Then reproduce the broadband comparison and quantify the wavelength-independent ADM and missing-energy assumptions. NASA access should use the installed earthaccess skill; authentication and network access were not exercised during setup.
+
+## First direct-S3 EMIT RGB — 2026-09-27
+
+- Confirmed EC2 region **us-west-2** from the region-only instance metadata endpoint. Authenticated with earthaccess using the existing external `~/.netrc`, without printing credentials. Verified the underlying file object is `s3fs.core.S3File`.
+- Successfully accessed `EMIT_L1B_RAD_001_20230426T090707_2311606_016`, acquired 2023-04-26 09:07:07–09:07:19 UTC over the Egyptian Sahara. Orthorectified extent: 28.123–29.244°E, 28.301–29.402°N.
+- S3 object: `s3://lp-prod-protected/EMITL1BRAD.001/EMIT_L1B_RAD_001_20230426T090707_2311606_016/EMIT_L1B_RAD_001_20230426T090707_2311606_016.nc`.
+- Collection 001 was selected for continuity with inherited work; CMR also lists 002. A narrow CMR temporal search returns overlapping acquisition intervals, not only start times. RAD granules include both RAD and OBS files; explicitly select the RAD filename.
+- Read root-group radiance with xarray/h5netcdf plus `sensor_band_parameters` and `location`. Radiance units are `uW/cm^2/SR/nm`; RGB uses band indices 36, 23, 9 (zero-based), at 648.7303, 551.8667, 447.7428 nm.
+- Generated a north-up RGB using the embedded GLT (one-based source sample/line indices, zero means missing), consistent with NASA EMIT-Data-Resources `emit_tools.py`. Original data: 1280 × 1242 pixels; orthorectified grid: 2031 × 2069. All selected raw RGB samples were finite/nonnegative; 2,103,024 output pixels have valid mapped RGB.
+- Display uses independent 2nd–98th percentile stretches and gamma 2.2. Colors are contrast enhanced; this is at-sensor radiance visualization, not surface reflectance or flux. No cloud/quality screening was performed. Visually checked the plotted desert texture, mapped footprint, geographic axes, and image layout.
+- Script: `scripts/plot_emit_rgb.py`. Run after `source scripts/activate.sh`. Outputs: `outputs/emit_rgb/EMIT_L1B_RAD_001_20230426T090707_2311606_016_RGB.png`, unannotated PNG, metadata JSON, and CMR JSON. A small provenance copy is tracked at `docs/first_emit_scene.json`.
+- Read the shared `~/Research/python_lib/EMIT_lib.py` and inspected the AWS helper interface. Used earthaccess to manage current temporary S3 credentials and explicit grouped xarray access instead of the older credential helper. Shared libraries were left unchanged.
+- No complete netCDF file was saved locally. V001 radiance storage is contiguous rather than chunked, so extracting three bands still incurred substantial S3 reads and took several minutes. Do not assume a small wavelength subset implies proportionately small I/O for this version.
+- Scientific flux calculations and CERES collocation have not yet been rerun. Next: inspect OBS geometry and quality masks for this case, then reconcile radiance integration, UV correction, and ADM usage before deriving flux.
